@@ -1,0 +1,85 @@
+input,
+textarea,
+select {
+margin-bottom: 10px;
+box-sizing: border-box;
+width: 100%;
+margin: 8px 0;
+padding: 8px 5px;
+border-radius: 5px;
+border: 1px solid #f80e0e;
+display: block;
+}
+.radio{
+    margin-bottom: 10px;
+    width: 20px;
+}
+.button{
+background-color: rgb(6,183,233);
+color: white;
+width: 150px;
+height: 30px;
+border: 1px solid #ccc;
+font-size: 15px;
+}
+label{
+    display: block;
+}
+form{
+    width: 100%;
+}
+.alert{
+    margin:10px;
+    padding:15px;
+    color: white;
+    border-radius: 10px;
+} 
+.alert.danger {
+    background-color: #f44336;
+}
+.alert.success{
+    background-color: #25da7c;
+}
+.alert.warning {
+    background-color: #e69e2b;
+}
+
+/*table*/
+table.mtable {
+    width: 50%;
+    border-collapse: collapse;
+    width: 50%;
+    border: 1px solid #ece0e0;
+}
+th,
+td {
+    text-align:left;
+    padding: 16px;
+}
+table.mtable tr:nth-child(even){
+    background: #faf7f7;
+}
+table.mtable td {
+    padding: 10px;
+}
+.home-content .overview-boxes{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    padding:0 20px;
+    margin-bottom: 26px;
+}
+.overview-boxes .box {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width:calc(100% / 4-15px) ;
+    background: #fff;
+    padding: 15px 14px;
+    border-radius: 12px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0,1);
+
+}
+
