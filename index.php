@@ -1,86 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calories Tracker</title>
+    <title>Fetch Data From Database</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 600px;
+            margin: auto;
+        }
 
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
 
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
-        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        th {
+            background-color: #f2f2f2;
+        }
 
+        .delete-button, .update-button {
+            background-color: #ff4d4d;
+            color: #ffffff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .search-bar {
+            margin-top: 10px;
+        }
+
+        .sort-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
-    <nav>
-        <div class="nav-wrapper blue">
-            <div class="container">
-                <a href="#" class="brand-logo center">Tack calories</a>
-                <ul>
-                    <li>
-                        <a href="#" class="clear-btn btn blue lighten-3">Clear All</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <br>
-
-    <div class="container">
-        <div class="card">
-            <div class="card-content">
-                <span class="card-title">Add Meal / Food item</span>
-                <form class="col"  method="POST" action="traitement.php">
-                    <div class="row">
-                        <div class="input-field col s6">
-                            <input type="text" placeholder="Add Item" name="meal" id="item-name">
-                            <label for="item-name">Meal</label>
-
-                        </div>
-                        <div class="input-field col s6">
-                            <input type="number" placeholder="Add Calories" name="calorie" id="item-calories">
-                            <label for="item-calories">Calories</label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <button class="btn add-btn blue darken-3" name="submit"><i class="fa fa-plus"></i> Add Meal</button>
-                        <button class="btn update-btn orange"><i class="fa fa-pencil-square-o"></i> Update Meal</button>
-                        <button class="btn delete-btn red"><i class="fa fa-remove"></i> Delete Meal</button>
-                        <button class="btn back-btn grey pull-right"><i class="fa fa-chevron-circle-left"></i>
-                            Back</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Calories count -->
-        <h3 class="center-align">Total calories: <span class="total-calories">0</span></h3>
-
-        <!-- Item list -->
-        <ul id="item-list" class="collection">
-            <!-- <li class="collection-item" id="item-0"><strong>Steak:</strong> <em>900 Calories</em>
-                <a href=3"" class="secondary-content"><i class="fa fa-pencil"></i></a>
-            </li>
-            <li class="collection-item" id="item-0"><strong>Egg:</strong> <em>600 Calories</em>
-                <a href=3"" class="secondary-content"><i class="fa fa-pencil"></i></a>
-            </li>
-            <li class="collection-item" id="item-0"><strong>Cookies:</strong> <em>900 Calories</em>
-                <a href=3"" class="secondary-content"><i class="fa fa-pencil"></i></a>
-            </li> -->
-        </ul>
-
+    <div class="search-bar">
+        <label for="searchId">Search by ID:</label>
+        <input type="text" id="searchId" name="searchId">
+        <button onclick="searchById()">Search</button>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
-        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <button class="sort-button" onclick="sortTable()">Sort by Calories</button>
 
-    <script src="app.js"></script>
+    <table align="center" border="1px" style="width:600px; line-height:40px;">
+        <tr>
+            <th colspan="5">
+                <h2>Your Food</h2>
+            </th>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Calorie</th>
+            <th>Action</th>
+            <th>Update</th>
+        </tr>
+
+        <?php
+        $servername = 'localhost';  // Nom de la base de données
+        $username = 'root';  // Nom d'utilisateur de la base de données
+        $password = '';  // Mot de passe de la base de données
+        $dbname = 'food'; // Nom de la base de données
+
+        try {
+            $bdd = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+            $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // Fetch data from the database
+            $stmt = $bdd->query('SELECT id, nom, calorie FROM meal');
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                echo "<tr>";
+                echo "<td>" . $row['id'] . "</td>";
+                echo "<td id='name-" . $row['id'] . "'>" . $row['nom'] . "</td>";
+                echo "<td id='calorie-" . $row['id'] . "'>" . $row['calorie'] . "</td>";
+                echo "<td><button class='delete-button' onclick=\"deleteMeal(" . $row['id'] . ")\">Delete</button></td>";
+                echo "<td><button class='update-button' onclick=\"updateMeal(" . $row['id'] . ")\">Update</button></td>";
+                echo "</tr>";
+            }
+        } catch (PDOException $e) {
+            echo "Erreur  : " . $e->getMessage();
+        }
+        ?>
+
+    </table>
+
+    <script>
+        function deleteMeal(mealId) {
+            // Send an AJAX request or redirect to a PHP script that handles the deletion
+            window.location.href = "delete.php?id=" + mealId;
+        }
+
+        function updateMeal(mealId) {
+            var newName = prompt("Enter the new name:");
+            var newCalorie = prompt("Enter the new calorie value:");
+            
+            if (newName !== null && newCalorie !== null) {
+                // Send an AJAX request or redirect to a PHP script that handles the update
+                window.location.href = "update.php?id=" + mealId + "&name=" + encodeURIComponent(newName) + "&calorie=" + newCalorie;
+            }
+        }
+
+        function searchById() {
+            var searchId = document.getElementById('searchId').value;
+
+            if (searchId !== "") {
+                // Redirect to a PHP script that handles the search by ID
+                window.location.href = "search.php?id=" + searchId;
+            }
+        }
+
+        function sortTable() {
+            // Redirect to a PHP script that handles sorting by calories
+            window.location.href = "sort.php";
+        }
+    </script>
 </body>
 
 </html>
